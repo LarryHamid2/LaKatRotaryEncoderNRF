@@ -1,0 +1,6 @@
+#
+# Syntax coloring for LaKat Rotary Encoder lib
+#
+
+LaKatRotaryEncoder  KEYWORD1
+
