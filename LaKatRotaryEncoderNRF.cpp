@@ -42,8 +42,8 @@ int LaKatRotaryEncoderNRF::begin( void (*callback_switch)() )
 
     m_lastButtonState     = HIGH; // We're using pullup
     m_currentButtonState  = HIGH; // Used when polling
-    m_lastDebounceTime    = lakat_millis();
-    m_lastSWInterruptTime = lakat_millis();
+    m_lastDebounceTime    = millis();
+    m_lastSWInterruptTime = millis();
     // PIN A will be used as the interrupt trigger for the encoder.
     //int pin = digitalPinToInterrupt( m_PIN_A );
     //attachInterrupt( pin, callback_rotary, CHANGE );
@@ -86,9 +86,9 @@ int LaKatRotaryEncoderNRF::didPress( void )
     int reading = digitalRead( m_PIN_SW );
     if ( reading != m_lastButtonState ) {
         // There's been a change of state.  Get the time of this.
-        m_lastDebounceTime = lakat_millis();
+        m_lastDebounceTime = millis();
     }
-    if ( lakat_millis() - m_lastDebounceTime > ENCODER_SWITCH_DEBOUNCE_DELAY ) {
+    if ( millis() - m_lastDebounceTime > ENCODER_SWITCH_DEBOUNCE_DELAY ) {
         // We're past the debounce period.
         if ( reading != m_currentButtonState ) {
             // We have a debounced change of state.
@@ -126,7 +126,7 @@ int LaKatRotaryEncoderNRF::getPosition( void )
 void LaKatRotaryEncoderNRF::rotary_encoder_switch_isr()
 {
     // We are falling, 
-    unsigned long interruptTime = lakat_millis();
+    unsigned long interruptTime = millis();
     unsigned long deltaT = interruptTime - m_lastSWInterruptTime;
 
     int a = digitalRead( m_PIN_SW );
