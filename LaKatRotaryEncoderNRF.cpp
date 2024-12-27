@@ -27,6 +27,9 @@ LaKatRotaryEncoderNRF::LaKatRotaryEncoderNRF( void )
     m_lastDebounceTime      = 0;
     m_lastButtonState       = -1;
     m_currentButtonState    = -1;
+
+    memset( m_turnFIFO, 0, N_TURN_SAMPLES * sizeof( int ) );
+    m_FIFO_position = 0;
 }
 
 int LaKatRotaryEncoderNRF::begin( void (*callback_switch)() )
@@ -66,6 +69,15 @@ int LaKatRotaryEncoderNRF::getButtonPin( void )
     return m_PIN_SW;
 }
 
+int LaKatRotaryEncoderNRF::getTurnRate( void )
+{
+    int total = 0;
+    for ( int i = 0; i < N_TURN_SAMPLES; i++ ) {
+        total += m_turnFIFO[ i ];
+    }
+    return abs(total);
+}
+
 //
 // Returns 0 if no change occurred.
 // Returns 1 if movement clockwise.
@@ -74,6 +86,9 @@ int LaKatRotaryEncoderNRF::didTurn( void )
 {
     int32_t position = m_encoder.readAbs()/2;
     int32_t delta = position - m_lastPosition;
+    // We want to keep track of the turn rate...
+    m_turnFIFO[ m_FIFO_position++ ] = (int)delta;
+    if ( N_TURN_SAMPLES == m_FIFO_position ) m_FIFO_position = 0;
     m_lastPosition = position;
     return delta;
 }

@@ -23,6 +23,7 @@
 
 #define ENCODER_DEBOUNCE_DELAY		5		// 5 milliseconds is supposed to be all we need according to Bourns
 #define ENCODER_SWITCH_DEBOUNCE_DELAY   15	// 5 milliseconds is supposed to be all we need according to Bourns
+#define N_TURN_SAMPLES              5       // # of samples in our FIFO to calculate turn rate.
 
 class LaKatRotaryEncoderNRF /* : public LaKatButtonCallbacks */
 {
@@ -35,6 +36,8 @@ private:
     int                 m_didPress;
     int                 m_currentButtonState;
     int                 m_lastButtonState;;
+    int                 m_turnFIFO[ N_TURN_SAMPLES ];
+    int                 m_FIFO_position;
 
     HwRotaryEncoder     m_encoder;              // Using Arduino Library
 
@@ -47,6 +50,7 @@ public:
   	void rotary_encoder_switch_isr();
   	int didTurn( void );
     int didPress( void );
+  	int getTurnRate( void );
   	int getPosition( void );
   	int getButtonPin( void );
 
